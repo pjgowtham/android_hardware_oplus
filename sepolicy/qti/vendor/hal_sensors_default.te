@@ -1,11 +1,15 @@
+typeattribute hal_sensors_default socket_between_core_and_vendor_violators;
 allow hal_sensors_default ssc_interactive_device:chr_file rw_file_perms;
 allow hal_sensors_default ultrasound_device:chr_file rw_file_perms;
-allow hal_sensors_default als_correction_service:process signal;
+
+# Allow hal_sensors_default to connect to als_correction_service unix stream socket
+allow hal_sensors_default als_correction_service:unix_stream_socket connectto;
+
+# Allow hal_sensors_default to read and write to als_correction_socket
+allow hal_sensors_default als_correction_socket:sock_file rw_file_perms;
 
 r_dir_file(hal_sensors_default, vendor_proc_ultrasound)
 rw_dir_file(hal_sensors_default, vendor_persist_engineer_file)
 rw_dir_file(hal_sensors_default, vendor_proc_display)
 rw_dir_file(hal_sensors_default, vendor_sysfs_graphics)
 rw_dir_file(hal_sensors_default, vendor_sysfs_sensor_fb)
-get_prop(hal_sensors_default, vendor_sensors_als_prop)
-
