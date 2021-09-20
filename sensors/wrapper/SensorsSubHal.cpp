@@ -269,7 +269,23 @@ Return<void> SensorsSubHal::configDirectReport(int32_t sensor_handle, int32_t ch
 }
 
 Return<void> SensorsSubHal::getSensorsList_2_1(ISensors::getSensorsList_2_1_cb callback) {
-    return impl_->getSensorsList_2_1([&](const auto& source) {
+    return impl_->getSensorsList_2_1([&](const auto& backend_sensors) {
+        std::vector<SensorInfo> source;
+        source.reserve(backend_sensors.size());
+        for (SensorInfo sensor : backend_sensors) {
+            if (sensor.typeAsString == "android.sensor.tilt_detector") {
+                // Implement only the wake-up version of this sensor.
+                if (!(sensor.flags & V1_0::SensorFlagBits::WAKE_UP)) {
+                    continue;
+                }
+                sensor.type = SensorType::PICK_UP_GESTURE;
+                sensor.typeAsString = SENSOR_STRING_TYPE_PICK_UP_GESTURE;
+                sensor.maxRange = 1;
+                pickup_handle_ = sensor.sensorHandle;
+            }
+            source.push_back(std::move(sensor));
+        }
+
         const auto high_pwm = std::find_if(source.begin(), source.end(), [](const auto& sensor) {
             return sensor.type == kTypeUnderScreenRgbSensor;
         });
@@ -375,6 +391,12 @@ void SensorsSubHal::postEvents(const std::vector<Event>& events, ScopedWakelock 
                 continue;
             }
             output.push_back(std::move(flush_event));
+            continue;
+        }
+
+        // Ignore events that do not properly match a pickup.
+        if (event.sensorHandle == pickup_handle_ && event.sensorType == SensorType::TILT_DETECTOR &&
+            event.u.scalar != 1) {
             continue;
         }
 

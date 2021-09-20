@@ -85,6 +85,7 @@ class SensorsSubHal : public ISensorsSubHal, public IHalProxyCallback {
     int32_t fusion_light_handle_ = -1;
     bool raw_enabled_ = false;
     std::atomic_bool fusion_light_enabled_ = false;
+    int32_t pickup_handle_ = -1;
 };
 
 }  // namespace fusionlight
