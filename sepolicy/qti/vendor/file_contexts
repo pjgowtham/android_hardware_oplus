@@ -29,6 +29,8 @@
 /dev/silead_fp                                                                                   u:object_r:fingerprint_device:s0
 /mnt/vendor/persist/fingerprint(/.*)?                                                            u:object_r:vendor_persist_fingerprint_file:s0
 
+# Firmware
+/firmware                  u:object_r:firmware_file:s0
 # Init
 /(odm|vendor/odm)/bin/init\.oplus\.sh          u:object_r:vendor_qti_init_shell_exec:s0
 /(odm|vendor/odm)/bin/init\.oplus\.wifi\.sh    u:object_r:vendor_qti_init_shell_exec:s0
