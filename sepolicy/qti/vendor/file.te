@@ -30,3 +30,7 @@ type vendor_proc_ultrasound, fs_type, proc_type;
 
 # Versioning
 type vendor_proc_oplus_version, fs_type, proc_type;
+
+# ZRam
+type vendor_sysfs_vm_swappiness, fs_type, sysfs_type;
+type vendor_sysfs_direct_vm_swappiness, fs_type, sysfs_type;

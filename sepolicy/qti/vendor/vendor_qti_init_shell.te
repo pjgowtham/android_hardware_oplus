@@ -4,3 +4,6 @@ create_dir_file(vendor_qti_init_shell, mnt_vendor_file)
 create_dir_file(vendor_qti_init_shell, vendor_persist_wcnss_service_file)
 
 allow vendor_qti_init_shell proc_page_cluster:file rw_file_perms;
+
+allow vendor_qti_init_shell vendor_sysfs_vm_swappiness:file rw_file_perms;
+allow vendor_qti_init_shell vendor_sysfs_direct_vm_swappiness:file rw_file_perms;

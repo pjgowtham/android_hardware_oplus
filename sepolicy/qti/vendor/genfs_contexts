@@ -108,3 +108,7 @@ genfscon sysfs /devices/platform/soc/soc:qcom,spcom/wakeup u:object_r:sysfs_wake
 genfscon sysfs /devices/platform/soc/soc:qcom,trustedvm@d0800000/subsys2/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/vendor/vendor:motor_pl/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/virtual/diag/diag/wakeup u:object_r:sysfs_wakeup:s0
+
+# ZRam
+genfscon sysfs /module/zram_opt/parameters/vm_swappiness u:object_r:vendor_sysfs_vm_swappiness:s0
+genfscon sysfs /module/zram_opt/parameters/direct_vm_swappiness u:object_r:vendor_sysfs_direct_vm_swappiness:s0
