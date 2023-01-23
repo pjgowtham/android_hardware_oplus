@@ -9,6 +9,8 @@ type vendor_proc_wireless, fs_type, proc_type;
 
 # Display
 type vendor_proc_display, fs_type, proc_type;
+type vendor_sysfs_backlight, fs_type, proc_type;
+type vendor_sysfs_display, fs_type, proc_type;
 
 # Engineering
 type vendor_proc_engineer, fs_type, proc_type;

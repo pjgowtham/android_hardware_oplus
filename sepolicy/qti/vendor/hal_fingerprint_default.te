@@ -11,6 +11,9 @@ allow hal_fingerprint_default tee_device:chr_file rw_file_perms;
 rw_dir_file(hal_fingerprint_default, vendor_proc_display)
 r_dir_file(hal_fingerprint_default, vendor_proc_fingerprint)
 
+rw_dir_file(hal_fingerprint_default, vendor_sysfs_display)
+rw_dir_file(hal_fingerprint_default, vendor_sysfs_backlight)
+
 get_prop(hal_fingerprint_default, system_oplus_project_prop)
 set_prop(hal_fingerprint_default, system_fingerprint_prop)
 set_prop(hal_fingerprint_default, vendor_fingerprint_prop)
