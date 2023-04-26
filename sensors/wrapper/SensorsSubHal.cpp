@@ -396,7 +396,7 @@ void SensorsSubHal::postEvents(const std::vector<Event>& events, ScopedWakelock 
 
         // Ignore events that do not properly match a pickup.
         if (event.sensorHandle == pickup_handle_ && event.sensorType == SensorType::TILT_DETECTOR &&
-            event.u.scalar != 1) {
+            event.u.scalar != 0) {
             continue;
         }
 
