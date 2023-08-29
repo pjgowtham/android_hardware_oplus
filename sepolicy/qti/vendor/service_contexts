@@ -32,3 +32,6 @@ vendor.oplus.hardware.radioex.sim.IOplusRadioExSim/slot1                u:object
 vendor.oplus.hardware.radioex.sim.IOplusRadioExSim/slot2                u:object_r:hal_radio_service:s0
 vendor.oplus.hardware.radioex.voice.IOplusRadioExVoice/slot1            u:object_r:hal_radio_service:s0
 vendor.oplus.hardware.radioex.voice.IOplusRadioExVoice/slot2            u:object_r:hal_radio_service:s0
+
+# Sensor
+vendor.oplus.hardware.oplusSensor.ISensorFeature/default                u:object_r:hal_oplusSensor_aidl_service:s0
