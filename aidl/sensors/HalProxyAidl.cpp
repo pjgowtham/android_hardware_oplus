@@ -25,6 +25,8 @@
 #include "WakeLockMessageQueueWrapperAidl.h"
 #include "convertV2_1.h"
 
+#include "AlsCorrection.h"
+
 using ::aidl::android::hardware::common::fmq::MQDescriptor;
 using ::aidl::android::hardware::common::fmq::SynchronizedReadWrite;
 using ::aidl::android::hardware::sensors::ISensors;
@@ -154,6 +156,13 @@ ScopedAStatus HalProxyAidl::flush(int32_t in_sensorHandle) {
 ScopedAStatus HalProxyAidl::getSensorsList(
     std::vector<::aidl::android::hardware::sensors::SensorInfo> *_aidl_return) {
   for (const auto &sensor : HalProxy::getSensors()) {
+      SensorInfo dst = sensor.second;
+      if (static_cast<int>(dst.type) == SENSOR_TYPE_QTI_WISE_LIGHT) {
+          dst.type = ::android::hardware::sensors::V2_1::SensorType::LIGHT;
+          ALOGV("Replaced QTI Light sensor with standard light sensor");
+          AlsCorrection::init();
+      }
+
     _aidl_return->push_back(convertSensorInfo(sensor.second));
   }
   return ScopedAStatus::ok();
@@ -167,6 +176,13 @@ ScopedAStatus HalProxyAidl::initialize(
   ::android::sp<::android::hardware::sensors::V2_1::implementation::
                     ISensorsCallbackWrapperBase>
       dynamicCallback = new ISensorsCallbackWrapperAidl(in_sensorsCallback);
+
+    std::vector<Event> events;
+    for (auto& event : events) {
+        if (static_cast<int>(event.sensorType) == SENSOR_TYPE_QTI_WISE_LIGHT) {
+            AlsCorrection::correct(event.u.scalar);
+        }
+    }
 
   auto aidlEventQueue = std::make_unique<::android::AidlMessageQueue<
       ::aidl::android::hardware::sensors::Event, SynchronizedReadWrite>>(
