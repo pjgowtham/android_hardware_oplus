@@ -282,6 +282,15 @@ Return<void> SensorsSubHal::getSensorsList_2_1(ISensors::getSensorsList_2_1_cb c
                 sensor.typeAsString = SENSOR_STRING_TYPE_PICK_UP_GESTURE;
                 sensor.maxRange = 1;
                 pickup_handle_ = sensor.sensorHandle;
+            } else if (sensor.typeAsString == "qti.sensor.amd") {
+                // Implement only the wake-up version of this sensor.
+                if (!(sensor.flags & V1_0::SensorFlagBits::WAKE_UP)) {
+                    continue;
+                }
+                sensor.type = SensorType::GLANCE_GESTURE;
+                sensor.typeAsString = SENSOR_STRING_TYPE_GLANCE_GESTURE;
+                sensor.maxRange = 2;
+                glance_handle_ = sensor.sensorHandle;
             }
             source.push_back(std::move(sensor));
         }
@@ -397,6 +406,12 @@ void SensorsSubHal::postEvents(const std::vector<Event>& events, ScopedWakelock 
         // Ignore events that do not properly match a pickup.
         if (event.sensorHandle == pickup_handle_ && event.sensorType == SensorType::TILT_DETECTOR &&
             event.u.scalar != 0) {
+            continue;
+        }
+
+        // Only pass motion events to quick pickup.
+        if (event.sensorHandle == glance_handle_ && event.sensorType != SensorType::META_DATA &&
+            event.u.scalar != 2) {
             continue;
         }
 
