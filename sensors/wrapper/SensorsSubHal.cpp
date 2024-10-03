@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <utility>
 
+#include <android-base/file.h>
 #include <android-base/logging.h>
 #include <convertV2_1.h>
 #include <hardware/sensors.h>
@@ -38,6 +39,8 @@ constexpr auto kLibName = "sensors.qsh.so";
 constexpr auto kTypeUnderScreenRgbSensor = static_cast<SensorType>(33171070);
 constexpr auto kTypeMainFusionConfigSensor = static_cast<SensorType>(33171042);
 constexpr int32_t kVirtualSensorHandleBase = 0x10000;
+
+constexpr auto kAodLightModeNode = "/sys/kernel/oplus_display/aod_light_mode_set";
 
 bool IsVirtualHandle(int32_t sensor_handle) {
     return sensor_handle >= kVirtualSensorHandleBase;
@@ -291,6 +294,8 @@ Return<void> SensorsSubHal::getSensorsList_2_1(ISensors::getSensorsList_2_1_cb c
                 sensor.typeAsString = SENSOR_STRING_TYPE_GLANCE_GESTURE;
                 sensor.maxRange = 2;
                 glance_handle_ = sensor.sensorHandle;
+            } else if (sensor.typeAsString == "qti.sensor.lux_aod") {
+                lux_aod_handle_ = sensor.sensorHandle;
             }
             source.push_back(std::move(sensor));
         }
@@ -413,6 +418,11 @@ void SensorsSubHal::postEvents(const std::vector<Event>& events, ScopedWakelock 
         if (event.sensorHandle == glance_handle_ && event.sensorType != SensorType::META_DATA &&
             event.u.scalar != 2) {
             continue;
+        }
+
+        // 0 is dark and 1 is bright, while the panel takes 1 for its low brightness AOD mode.
+        if (event.sensorHandle == lux_aod_handle_ && event.sensorType != SensorType::META_DATA) {
+            android::base::WriteStringToFile(event.u.scalar ? "0" : "1", kAodLightModeNode);
         }
 
         // Forward every non-flush event unchanged.
