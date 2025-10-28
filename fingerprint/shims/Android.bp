@@ -12,6 +12,12 @@ cc_defaults {
 }
 
 cc_library_shared {
+    name: "libshims_aidl_fingerprint_v1.oplus",
+    defaults: ["libshims_aidl_fingerprint.oplus_defaults"],
+    static_libs: ["android.hardware.biometrics.fingerprint-V1-ndk"],
+}
+
+cc_library_shared {
     name: "libshims_aidl_fingerprint_v2.oplus",
     defaults: ["libshims_aidl_fingerprint.oplus_defaults"],
     static_libs: ["android.hardware.biometrics.fingerprint-V2-ndk"],
