@@ -158,6 +158,7 @@ genfscon sysfs /devices/platform/soc/994000.i2c/i2c-5/5-003b/994000.i2c:op,wlchg
 genfscon sysfs /devices/platform/soc/994000.i2c/i2c-5/5-0066/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/994000.i2c/i2c-8/8-003b/994000.i2c:op,wlchg_rx@3b:idt,p9415/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/994000.i2c/i2c-8/8-0066/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/soc/9c0000.qcom,qupv3_0_geni_se/990000.i2c/i2c-5/5-004b/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/9c0000.qcom,qupv3_i2c_geni_se/980000.i2c/i2c-24/24-006a/ufcs/ufcs/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/9c0000.qcom,qupv3_i2c_geni_se/980000.i2c/i2c-24/24-006a/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/9c0000.qcom,qupv3_i2c_geni_se/984000.i2c/i2c-24/24-0036/wakeup u:object_r:sysfs_wakeup:s0
@@ -197,6 +198,7 @@ genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a80000.i2c/i2c-
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a80000.i2c/i2c-7/7-0028/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a80000.i2c/i2c-8/8-0028/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a80000.i2c/i2c-9/9-0028/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a84000.i2c/i2c-7/7-0028/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a84000.qcom,qup_uart/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a8c000.i2c/i2c-10/10-000e/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a8c000.i2c/i2c-11/11-000e/wakeup u:object_r:sysfs_wakeup:s0
