@@ -11,11 +11,14 @@
 #include <utility>
 
 #include <android-base/logging.h>
+#include <convertV2_1.h>
 #include <hardware/sensors.h>
 
 using ::android::hardware::sensors::V1_0::MetaDataEventType;
 using ::android::hardware::sensors::V2_0::implementation::ScopedWakelock;
-using ::android::hardware::sensors::V2_1::implementation::ISensorsSubHal;
+using ::android::hardware::sensors::V2_1::implementation::convertToNewEvents;
+using ::android::hardware::sensors::V2_1::implementation::convertToNewSensorInfos;
+using ::android::hardware::sensors::V2_1::implementation::convertToOldEvent;
 
 namespace android {
 namespace hardware {
@@ -45,6 +48,89 @@ int32_t ToVirtualHandle(int32_t sensor_handle) {
                                           : sensor_handle + kVirtualSensorHandleBase;
 }
 
+class HalProxyCallbackV2_0 : public V2_0::implementation::IHalProxyCallback {
+  public:
+    explicit HalProxyCallbackV2_0(const sp<V2_1::implementation::IHalProxyCallback>& callback)
+        : callback_(callback) {}
+
+    Return<void> onDynamicSensorsConnected(
+            const hidl_vec<V1_0::SensorInfo>& sensor_infos) override {
+        return callback_->onDynamicSensorsConnected_2_1(convertToNewSensorInfos(sensor_infos));
+    }
+
+    Return<void> onDynamicSensorsDisconnected(const hidl_vec<int32_t>& sensor_handles) override {
+        return callback_->onDynamicSensorsDisconnected(sensor_handles);
+    }
+
+    void postEvents(const std::vector<V1_0::Event>& events, ScopedWakelock wakelock) override {
+        callback_->postEvents(convertToNewEvents(events), std::move(wakelock));
+    }
+
+    ScopedWakelock createScopedWakelock(bool lock) override {
+        return callback_->createScopedWakelock(lock);
+    }
+
+  private:
+    sp<V2_1::implementation::IHalProxyCallback> callback_;
+};
+
+// Presents a 2.0 sub-HAL as a 2.1 one, so the wrapper only deals with the latter.
+class SubHalV2_0 : public ISensorsSubHal {
+  public:
+    explicit SubHalV2_0(V2_0::implementation::ISensorsSubHal* impl) : impl_(impl) {}
+
+    Return<Result> setOperationMode(OperationMode mode) override {
+        return impl_->setOperationMode(mode);
+    }
+
+    Return<Result> activate(int32_t sensor_handle, bool enabled) override {
+        return impl_->activate(sensor_handle, enabled);
+    }
+
+    Return<Result> batch(int32_t sensor_handle, int64_t sampling_period_ns,
+                         int64_t max_report_latency_ns) override {
+        return impl_->batch(sensor_handle, sampling_period_ns, max_report_latency_ns);
+    }
+
+    Return<Result> flush(int32_t sensor_handle) override { return impl_->flush(sensor_handle); }
+
+    Return<void> registerDirectChannel(const SharedMemInfo& mem,
+                                       registerDirectChannel_cb callback) override {
+        return impl_->registerDirectChannel(mem, callback);
+    }
+
+    Return<Result> unregisterDirectChannel(int32_t channel_handle) override {
+        return impl_->unregisterDirectChannel(channel_handle);
+    }
+
+    Return<void> configDirectReport(int32_t sensor_handle, int32_t channel_handle, RateLevel rate,
+                                    configDirectReport_cb callback) override {
+        return impl_->configDirectReport(sensor_handle, channel_handle, rate, callback);
+    }
+
+    Return<void> getSensorsList_2_1(getSensorsList_2_1_cb callback) override {
+        return impl_->getSensorsList(
+                [&](const auto& sensors) { callback(convertToNewSensorInfos(sensors)); });
+    }
+
+    Return<Result> injectSensorData_2_1(const Event& event) override {
+        return impl_->injectSensorData(convertToOldEvent(event));
+    }
+
+    Return<void> debug(const hidl_handle& fd, const hidl_vec<hidl_string>& args) override {
+        return impl_->debug(fd, args);
+    }
+
+    const std::string getName() override { return impl_->getName(); }
+
+    Return<Result> initialize(const sp<IHalProxyCallback>& hal_proxy_callback) override {
+        return impl_->initialize(new HalProxyCallbackV2_0(hal_proxy_callback));
+    }
+
+  private:
+    V2_0::implementation::ISensorsSubHal* impl_;
+};
+
 };  // anonymous namespace
 
 SensorsSubHal::SensorsSubHal()
@@ -59,15 +145,24 @@ SensorsSubHal::SensorsSubHal()
         LOG(FATAL) << "dlopen " << kLibName << " failed: " << dlerror();
     }
 
-    const auto get_sub_hal = reinterpret_cast<ISensorsSubHal* (*)(uint32_t*)>(
-            dlsym(lib_handle_.get(), "sensorsHalGetSubHal_2_1"));
-    if (get_sub_hal == nullptr) {
-        LOG(FATAL) << "sensorsHalGetSubHal_2_1 is missing from " << kLibName;
-    }
     uint32_t version;
-    impl_ = get_sub_hal(&version);
-    if (impl_ == nullptr) {
-        LOG(FATAL) << "sensorsHalGetSubHal_2_1 returned null";
+    if (const auto get_sub_hal =
+                reinterpret_cast<V2_0::implementation::ISensorsSubHal* (*)(uint32_t*)>(
+                        dlsym(lib_handle_.get(), "sensorsHalGetSubHal"))) {
+        const auto impl = get_sub_hal(&version);
+        if (impl == nullptr) {
+            LOG(FATAL) << "sensorsHalGetSubHal returned null";
+        }
+        impl_v2_0_ = new SubHalV2_0(impl);
+        impl_ = impl_v2_0_.get();
+    } else if (const auto get_sub_hal_2_1 = reinterpret_cast<ISensorsSubHal* (*)(uint32_t*)>(
+                       dlsym(lib_handle_.get(), "sensorsHalGetSubHal_2_1"))) {
+        impl_ = get_sub_hal_2_1(&version);
+        if (impl_ == nullptr) {
+            LOG(FATAL) << "sensorsHalGetSubHal_2_1 returned null";
+        }
+    } else {
+        LOG(FATAL) << "sensorsHalGetSubHal is missing from " << kLibName;
     }
 }
 
@@ -320,7 +415,8 @@ ScopedWakelock SensorsSubHal::createScopedWakelock(bool lock) {
 }  // namespace hardware
 }  // namespace android
 
-ISensorsSubHal* sensorsHalGetSubHal_2_1(uint32_t* version) {
+::android::hardware::sensors::V2_1::implementation::ISensorsSubHal* sensorsHalGetSubHal_2_1(
+        uint32_t* version) {
     static ::android::hardware::sensors::V2_1::subhal::implementation::fusionlight::SensorsSubHal
             sub_hal;
     *version = SUB_HAL_2_1_VERSION;

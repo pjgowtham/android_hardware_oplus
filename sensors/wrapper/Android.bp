@@ -13,6 +13,7 @@ cc_library_shared {
         "SensorsSubHal.cpp",
     ],
     shared_libs: [
+        "android.hardware.sensors@1.0",
         "android.hardware.sensors@2.0",
         "android.hardware.sensors@2.0-ScopedWakelock",
         "android.hardware.sensors@2.1",
@@ -29,10 +30,12 @@ cc_library_shared {
         "vendor.qti.hardware.display.config-V12-ndk",
     ],
     static_libs: [
+        "android.hardware.sensors@1.0-convert",
         "libaidlcommonsupport",
     ],
     header_libs: [
         "android.hardware.sensors@2.X-multihal.header",
+        "android.hardware.sensors@2.X-shared-utils",
         "libeigen",
         "libhardware_headers",
     ],

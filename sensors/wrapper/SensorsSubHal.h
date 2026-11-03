@@ -9,6 +9,7 @@
 #include <deque>
 #include <mutex>
 
+#include <V2_0/SubHal.h>
 #include <V2_1/SubHal.h>
 
 #include "FusionLightProcessor.h"
@@ -71,6 +72,7 @@ class SensorsSubHal : public ISensorsSubHal, public IHalProxyCallback {
     void emitFusionEvent(Event event);
 
     std::unique_ptr<void, std::function<void(void*)>> lib_handle_;
+    sp<ISensorsSubHal> impl_v2_0_;
     V2_1::implementation::ISensorsSubHal* impl_;
     sp<IHalProxyCallback> hal_proxy_callback_;
 
