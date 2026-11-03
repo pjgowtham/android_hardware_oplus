@@ -948,3 +948,15 @@ cc_library_shared {
     defaults: ["vendor.oplus.hardware.ndk_platform_shim_defaults"],
     whole_static_libs: ["vendor.oplus.hardware.sendextcamcmd-V1-ndk"],
 }
+
+cc_library_shared {
+    name: "vendor.oplus.hardware.sendextcamcmd-V2-ndk_platform",
+    defaults: ["vendor.oplus.hardware.ndk_platform_shim_defaults"],
+    whole_static_libs: ["vendor.oplus.hardware.sendextcamcmd-V2-ndk"],
+}
+
+cc_library_shared {
+    name: "vendor.oplus.hardware.urcc-V1-ndk_platform",
+    defaults: ["vendor.oplus.hardware.ndk_platform_shim_defaults"],
+    whole_static_libs: ["vendor.oplus.hardware.urcc-V1-ndk"],
+}
