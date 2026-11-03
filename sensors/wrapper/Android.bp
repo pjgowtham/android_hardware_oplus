@@ -4,7 +4,7 @@
 //
 
 cc_library_shared {
-    name: "sensors.fusionlight",
+    name: "sensors.oplus_wrapper",
     defaults: ["hidl_defaults"],
     srcs: [
         "CwbSampler.cpp",
@@ -37,8 +37,8 @@ cc_library_shared {
         "libhardware_headers",
     ],
     cflags: [
-        "-DLOG_TAG=\"sensors.fusionlight\"",
-    ] + select(soong_config_variable("OPLUS_SENSORS_FUSIONLIGHT", "BACKEND_SUBHAL_LIB_NAME"), {
+        "-DLOG_TAG=\"sensors.oplus_wrapper\"",
+    ] + select(soong_config_variable("OPLUS_SENSORS_WRAPPER", "BACKEND_SUBHAL_LIB_NAME"), {
         any @ flag_val: ["-DBACKEND_SUBHAL_LIB_NAME=\"" + flag_val + "\""],
         default: [],
     }),
