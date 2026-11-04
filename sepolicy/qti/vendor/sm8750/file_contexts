@@ -1,0 +1,2 @@
+# Widevine
+/(odm|vendor/odm)/bin/hw/android\.hardware\.drm@1\.[0-4]+-service\.widevine    u:object_r:hal_drm_widevine_exec:s0
