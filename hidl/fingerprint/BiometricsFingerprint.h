@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <aidl/android/hardware/power/IPower.h>
 #include <android-base/properties.h>
 #include <android-base/strings.h>
 #include <android/hardware/biometrics/fingerprint/2.1/types.h>
@@ -25,6 +26,7 @@
 #include <hidl/MQDescriptor.h>
 #include <hidl/Status.h>
 #include <log/log.h>
+#include <mutex>
 
 #include <oplus/oplus_display_panel.h>
 #include <vendor/oplus/hardware/biometrics/fingerprint/2.1/IBiometricsFingerprint.h>
@@ -125,13 +127,22 @@ class BiometricsFingerprint : public IBiometricsFingerprint,
     }
 
     bool setFpPress(unsigned int value) {
-        return isUdfps() && ioctl(mOplusDisplayFd, PANEL_IOCTL_SET_FP_PRESS, &value) == 0;
+        if (!isUdfps()) return false;
+        // Boost the capture and match the way stock does through URCC
+        setLaunchBoost(value);
+        return ioctl(mOplusDisplayFd, PANEL_IOCTL_SET_FP_PRESS, &value) == 0;
     }
+
+    void setLaunchBoost(bool enable);
 
     sp<IOplusBiometricsFingerprint> mOplusBiometricsFingerprint;
     sp<V2_1::IBiometricsFingerprintClientCallback> mClientCallback;
 
     int mOplusDisplayFd;
+
+    std::mutex mPowerMutex;
+    std::shared_ptr<aidl::android::hardware::power::IPower> mPower;
+    bool mLaunchBoost = false;
 };
 
 }  // namespace implementation

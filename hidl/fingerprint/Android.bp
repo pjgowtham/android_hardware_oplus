@@ -6,7 +6,10 @@
 
 cc_binary {
     name: "android.hardware.biometrics.fingerprint@2.3-service.oplus",
-    defaults: ["hidl_defaults"],
+    defaults: [
+        "android.hardware.power-ndk_shared",
+        "hidl_defaults",
+    ],
     init_rc: ["android.hardware.biometrics.fingerprint@2.3-service.oplus.rc"],
     vintf_fragments: ["android.hardware.biometrics.fingerprint@2.3-service.oplus.xml"],
     vendor: true,
@@ -17,6 +20,7 @@ cc_binary {
     ],
     shared_libs: [
         "libbase",
+        "libbinder_ndk",
         "libhidlbase",
         "libutils",
         "android.hardware.biometrics.fingerprint@2.1",

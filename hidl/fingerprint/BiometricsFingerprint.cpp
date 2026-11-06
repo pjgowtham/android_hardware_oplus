@@ -18,6 +18,9 @@
 
 #include "BiometricsFingerprint.h"
 
+#include <android-base/logging.h>
+#include <android/binder_manager.h>
+
 namespace android {
 namespace hardware {
 namespace biometrics {
@@ -29,6 +32,29 @@ BiometricsFingerprint::BiometricsFingerprint()
     : mOplusDisplayFd(open("/dev/oplus_display", O_RDWR)) {
     mOplusBiometricsFingerprint = IOplusBiometricsFingerprint::getService();
     mOplusBiometricsFingerprint->setHalCallback(this);
+}
+
+void BiometricsFingerprint::setLaunchBoost(bool enable) {
+    using aidl::android::hardware::power::IPower;
+    using aidl::android::hardware::power::Mode;
+
+    std::lock_guard<std::mutex> lock(mPowerMutex);
+    if (mLaunchBoost == enable) return;
+
+    if (!mPower) {
+        const std::string instance = std::string(IPower::descriptor) + "/default";
+        mPower = IPower::fromBinder(ndk::SpAIBinder(AServiceManager_checkService(instance.c_str())));
+        if (!mPower) {
+            LOG(WARNING) << "Failed to get " << instance;
+            return;
+        }
+    }
+
+    if (mPower->setMode(Mode::LAUNCH, enable).isOk()) {
+        mLaunchBoost = enable;
+    } else {
+        mPower = nullptr;
+    }
 }
 
 Return<uint64_t> BiometricsFingerprint::setNotify(
