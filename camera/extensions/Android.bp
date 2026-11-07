@@ -1,0 +1,50 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+// Compile-time stubs for the Oplus camera unit SDK, which ships as dex only.
+java_library {
+    name: "oplus-camera-unit-sdk-stubs",
+    srcs: ["stubs/**/*.java"],
+    sdk_version: "current",
+    installable: false,
+}
+
+// Exposes the extensions of the Oplus camera unit SDK through the
+// androidx.camera.extensions.impl interface used by the Camera2 extensions proxy.
+java_library {
+    name: "androidx.camera.extensions.impl.oplus",
+    installable: true,
+    system_ext_specific: true,
+    platform_apis: true,
+    srcs: ["src/**/*.java"],
+    libs: ["oplus-camera-unit-sdk-stubs"],
+    required: [
+        "androidx.camera.extensions.impl.oplus.xml",
+        "libAPSClient-cmd-jni-extension.oplus",
+        "libAPSClient-jni-extension.oplus.qti",
+    ],
+}
+
+prebuilt_etc {
+    name: "androidx.camera.extensions.impl.oplus.xml",
+    src: "androidx.camera.extensions.impl.oplus.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}
+
+// The SDK loads the APS client under these names when running as an extension.
+install_symlink {
+    name: "libAPSClient-cmd-jni-extension.oplus",
+    installed_location: "lib64/libAPSClient-cmd-jni-extension.oplus.so",
+    symlink_target: "/system_ext/lib64/libAPSClient-cmd-jni.so",
+    system_ext_specific: true,
+}
+
+install_symlink {
+    name: "libAPSClient-jni-extension.oplus.qti",
+    installed_location: "lib64/libAPSClient-jni-extension.oplus.qti.so",
+    symlink_target: "/system_ext/lib64/libAPSClient-jni.so",
+    system_ext_specific: true,
+}
