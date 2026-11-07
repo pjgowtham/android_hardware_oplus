@@ -4,6 +4,12 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <permissions>
+    <library name="com.oplus.camera.unit.sdk"
+        file="/system_ext/framework/com.oplus.camera.unit.sdk.jar" />
+
+    <library name="com.oplus.camera.unit.sdk.adapter"
+        file="/system_ext/framework/com.oplus.camera.unit.sdk.adapter.jar" />
+
     <library name="androidx.camera.extensions.impl"
         file="/system_ext/framework/androidx.camera.extensions.impl.oplus.jar"
         dependency="com.oplus.camera.unit.sdk:com.oplus.camera.unit.sdk.adapter" />
