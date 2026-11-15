@@ -5,8 +5,11 @@
 
 #pragma once
 
+#include <Trustlet.h>
+
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <optional>
 
 namespace aidl::android::hardware::biometrics::face {
@@ -21,8 +24,6 @@ class FaceTee {
     static constexpr size_t kFrameSize = kFrameWidth * kFrameHeight * 3 / 2;
     static constexpr int kMaxFrames = 5;
 
-    ~FaceTee();
-
     bool open();
     bool saveFeature(const uint8_t* feature, size_t size);
     bool removeFeature();
@@ -32,20 +33,13 @@ class FaceTee {
     bool removeFrame(int index);
 
   private:
-    struct QSEECom_handle {
-        uint8_t* ion_sbuffer;
-    };
+    using Trustlet = ::oplus::qseecom::Trustlet;
 
-    bool load();
-    bool start(QSEECom_handle** handle);
-    uint32_t send(QSEECom_handle* handle, size_t requestSize, size_t responseSize);
+    bool start(std::unique_ptr<Trustlet>& trustlet);
+    uint32_t send(Trustlet& trustlet, size_t requestSize, size_t responseSize);
 
-    void* mLib = nullptr;
-    QSEECom_handle* mFeatureHandle = nullptr;
-    QSEECom_handle* mFrameHandle = nullptr;
-    int (*mStartApp)(QSEECom_handle**, const char*, const char*, uint32_t) = nullptr;
-    int (*mShutdownApp)(QSEECom_handle**) = nullptr;
-    int (*mSendCmd)(QSEECom_handle*, void*, uint32_t, void*, uint32_t) = nullptr;
+    std::unique_ptr<Trustlet> mFeature;
+    std::unique_ptr<Trustlet> mFrame;
 };
 
 }  // namespace aidl::android::hardware::biometrics::face

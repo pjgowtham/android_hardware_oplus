@@ -4,6 +4,9 @@
 //
 
 soong_namespace {
+    imports: [
+        "hardware/oplus",
+    ],
 }
 
 cc_binary {
@@ -31,7 +34,7 @@ cc_binary {
         "libbinder_ndk",
         "libcamera2ndk_vendor",
         "libdl",
-        "libion",
+        "libdmabufheap",
         "liblog",
         "libmediandk",
         "libnativewindow",
@@ -40,5 +43,6 @@ cc_binary {
     static_libs: [
         "android.hardware.biometrics.common.thread",
         "android.hardware.biometrics.common.util",
+        "libqseecom.oplus",
     ],
 }
