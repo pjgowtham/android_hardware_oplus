@@ -1,0 +1,17 @@
+//
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_library_static {
+    name: "libqseecom.oplus",
+    vendor: true,
+    srcs: ["Trustlet.cpp"],
+    export_include_dirs: ["include"],
+    shared_libs: [
+        "libbase",
+        "libdl",
+        "libdmabufheap",
+        "liblog",
+    ],
+}
