@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#define LOG_TAG "android.hardware.biometrics.face-service.oneplus"
+#define LOG_TAG "android.hardware.biometrics.face-service.oplus"
 
 #include "Session.h"
 

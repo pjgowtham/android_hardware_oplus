@@ -7,9 +7,9 @@ soong_namespace {
 }
 
 cc_binary {
-    name: "android.hardware.biometrics.face-service.oneplus",
-    init_rc: ["android.hardware.biometrics.face-service.oneplus.rc"],
-    vintf_fragments: ["android.hardware.biometrics.face-service.oneplus.xml"],
+    name: "android.hardware.biometrics.face-service.oplus",
+    init_rc: ["android.hardware.biometrics.face-service.oplus.rc"],
+    vintf_fragments: ["android.hardware.biometrics.face-service.oplus.xml"],
     vendor: true,
     relative_install_path: "hw",
     srcs: [

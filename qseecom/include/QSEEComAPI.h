@@ -227,6 +227,13 @@ int QSEECom_send_modified_cmd(struct QSEECom_handle *handle, void *send_buf,
                               struct QSEECom_ion_fd_info *ifd_data);
 
 /**
+ * @brief Same as QSEECom_send_modified_cmd, but patches in 64-bit addresses.
+ */
+int QSEECom_send_modified_cmd_64(struct QSEECom_handle *handle, void *send_buf,
+                                 uint32_t sbuf_len, void *resp_buf, uint32_t rbuf_len,
+                                 struct QSEECom_ion_fd_info *ifd_data);
+
+/**
  * @brief Receive a service defined buffer.
  *
  * @param[in] handle    The device handle

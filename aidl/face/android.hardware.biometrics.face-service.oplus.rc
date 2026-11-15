@@ -5,7 +5,7 @@ on post-fs-data
     mkdir /data/vendor/misc/qsee 0770 system system
     mkdir /data/vendor/misc/qsee/face 0770 system system
 
-service vendor.face-hal /vendor/bin/hw/android.hardware.biometrics.face-service.oneplus
+service vendor.face-hal /vendor/bin/hw/android.hardware.biometrics.face-service.oplus
     class late_start
     user system
     group system camera
