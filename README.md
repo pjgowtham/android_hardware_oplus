@@ -17,6 +17,7 @@
 | OPLUS_LINEAGE_TOUCH_HAL | HTPR_ENABLE_VALUE | HighTouchPollingRate enable value | 1 |
 | OPLUS_LINEAGE_TOUCH_HAL | INCLUDE_DIR | Device specific include dir path | |
 | OPLUS_LINEAGE_TOUCH_HAL | USE_OPLUSTOUCH | Use and interface with stock OplusTouch | false |
+| OPLUS_LINEAGE_VIBRATOR_EFFECT | INCLUDE_DIR | Device specific dir with LraConfig.h, overriding the default LRA model | |
 | OPLUS_LINEAGE_VIBRATOR_HAL | INCLUDE_DIR | Device specific include dir path | |
 | OPLUS_LINEAGE_VIBRATOR_HAL | USE_EFFECT_STREAM | Enable effect stream feature | false |
 | OPLUS_SENSORS_WRAPPER | BACKEND_SUBHAL_LIB_NAME | Sensors SubHAL wrapper backend library name | sensors.qsh.so |
